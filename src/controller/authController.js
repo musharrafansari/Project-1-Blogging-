@@ -1,22 +1,23 @@
 const authModel = require('../model/authorModel')
 
 const createAuthor =  async function(req,res) {
-try{
+// try{
 let data = req.body
 
-if(!Object.keys(data).length){
-  res.status(400).send({ status: false, msg: "Author data required"})
+if(Object.keys(data).length!=0){
+  let savedata = await authModel.create(data)
+  res.send({status: true,msg: savedata})
 }    
 
-else{
-let savedata = await authModel.create(data)
-res.status(201).send({status: true,msg: savedata})
+ else{
+res.send("Author data is required")
 }
 
-}catch(err){
-    res.status(500).send({status: false, msg: 'server not respond'})
-}
+// }catch(err){
+//     res.status(500).send({status: false, msg: 'server not respond'})
+// }
 
 }
+
 
 module.exports.createAuthor = createAuthor

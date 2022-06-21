@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const authController = require('../controller/authController')
+const blogController = require("../controller/blogController")
 
 
 router.get('/test-me', function (req, res) {
@@ -10,6 +11,7 @@ router.get('/test-me', function (req, res) {
 });
 
 router.post('/creatAuthor', authController.createAuthor)
+router.post("/createBlog",blogController.createBlog)
 
 module.exports = router;
 // adding this comment for no reason
