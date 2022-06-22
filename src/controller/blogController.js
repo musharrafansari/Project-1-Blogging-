@@ -3,6 +3,7 @@ const blogModel = require("../model/blogModel");
 
 
 const createBlog = async function(req,res){
+  try{
   let data = req.body
   let id = data.authorId
  
@@ -10,24 +11,39 @@ const createBlog = async function(req,res){
   let authId = authorId._id.toString()
   
   if(Object.keys(data).length==0){
-    res.send({status:false,msg:"blog data required"})
+       return res.status(400).send({status:false,msg:"blog data required"})
   }  
-  else{
-    if(!id){
-        res.send("authorId Is required")
-    }
-    else{
-       if(id!=authId) {res.send("Invalid Author")}
 
-       else{
+  if(!data.title)
+               { return res.status(400).send({status: false, msg: "Title must be present."})}
+
+  if(!data.body)
+                {return res.status(400).send({status: false, msg: "Body must be present."})}
+  if(!id)
+                {return res.status(400).send({status: false, msg: "AuthorId must be present."})}
+
+    
+  if(id!=authId)
+              {return res.status(400).send("Invalid Author")}
+  if(!data.category)
+              {return res.status(400).send({status: false, msg: "Category must be present."})}
+
+       
         let saveData = await blogModel.create(data)
-        res.send({status:true, msg:saveData})
-       }
-
-     
+        res.status(201).send({status:true, msg:saveData})
+    
+      
+      
     }
-  }
+  
+  
+
+catch(err){
+
+  res.status(500).send({status:false,msg:err.message})
 }
+}
+
 const getBlogs = async function (req, res) {
     try {
       let data = req.query;
@@ -46,6 +62,8 @@ const getBlogs = async function (req, res) {
       res.status(500).send({ status: false, data: err.message });
     }
   };
+
+
 
 module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
