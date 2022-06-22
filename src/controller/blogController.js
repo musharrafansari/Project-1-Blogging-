@@ -7,8 +7,8 @@ const createBlog = async function(req,res){
   let data = req.body
   let id = data.authorId
  
-  let authorId = await authorModel.findById(id).select({_id:1})
-  let authId = authorId._id.toString()
+  let authorId = await authorModel.findById(id)
+  
   
   if(Object.keys(data).length==0){
        return res.status(400).send({status:false,msg:"blog data required"})
@@ -23,7 +23,7 @@ const createBlog = async function(req,res){
                 {return res.status(400).send({status: false, msg: "AuthorId must be present."})}
 
     
-  if(id!=authId)
+  if(id!=authorId._id)
               {return res.status(400).send("Invalid Author")}
   if(!data.category)
               {return res.status(400).send({status: false, msg: "Category must be present."})}
