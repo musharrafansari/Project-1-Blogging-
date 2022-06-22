@@ -10,7 +10,7 @@ const createAuthor =  async function(req,res) {
 
        if (!data.fname) { return res.status(400).send({ status: false, msg: "fname is mandatory" }) }
 
-    if(!data.fname.trim().match(/^[a-zA-Z]+$/)) 
+    if(!data.fname.trim().match(/^[a-zA-Z]+$/)) //regex
         {return res.status(400).send({status: false, msg: "Enter a valid First name."})}
 
         if (!data.lname) { return res.status(400).send({ status: false, msg: "lname is mandatory" }) }
