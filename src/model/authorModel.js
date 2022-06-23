@@ -3,11 +3,13 @@ let mongoose = require("mongoose");
 const authorSchema = mongoose.Schema({
     fname :{ 
         type:String,
-        required:true,
+        required:true
+       
     },
     lname:{
        type:String,
-       required:true
+       required:true,
+       
     },
     title:{
         type:String,
