@@ -8,9 +8,6 @@ const loginController = require("../controller/loginController")
 const auth1 = require("../middleware/authentication")
 // const auth2 = require("../middleware/authorization")
 
-router.get('/test-me', function (req, res) {
-    res.send('My first ever api!')
-});
 
 router.post('/authors', authController.createAuthor)
 router.post("/blogs",auth1.authenticate, blogController.createBlog)
@@ -22,5 +19,7 @@ router.delete('/blogs/:blogId',auth1.authenticate, blogController.deleteByBlogId
 router.delete('/blogs',auth1.authenticate, blogController.deleteBlogbyquery)
 
 router.post('/login', loginController.authorLogin)
+
+
 module.exports = router;
 // adding this comment for no reason
