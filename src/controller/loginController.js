@@ -32,9 +32,11 @@ const authorLogin = async function (req, res) {
         }
 
         let login = await authorModel.findOne({ email: emails, pasword: password })
+
         if (!login.email) { res.status(400).send({ status: false, msg: 'Invalid email' }) }
+
         if (!login.pasword) { res.status(400).send({ msg: "Invalid password" }) }
-        
+
         // creating JWt
         let token = jwt.sign(
             {
@@ -44,10 +46,10 @@ const authorLogin = async function (req, res) {
             },
             "FunctionUp-radon"
         )
-            // res.header('x-api-key',token)
-        res.status(200).send({status:true, token:token})
-    }catch(err){
-        res.status(500).send({msg: err.message})
+
+        res.status(200).send({ status: true, token: token })
+    } catch (err) {
+        res.status(500).send({ msg: err.message })
     }
 }
 
