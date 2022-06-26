@@ -31,7 +31,7 @@ const authorLogin = async function (req, res) {
             res.status(400).send({ status: false, msg: "Please enter your password " })
         }
 
-        let login = await authorModel.findOne({ email: emails, pasword: password })
+        let login = await authorModel.findOne({ email: emails, pasword: password }) //here we call authorModel db and save the data in login  VARIABLE
 
         if (!login.email) { res.status(400).send({ status: false, msg: 'Invalid email' }) }
 
@@ -41,10 +41,10 @@ const authorLogin = async function (req, res) {
         let token = jwt.sign(
             {
                 UserEmail: login.email,
-                UserId: login._id.toString(),
+                UserId: login._id.toString(),//this is payload
                 batch: "radon-Project-1"
             },
-            "FunctionUp-radon"
+            "FunctionUp-radon" //this is SECRET KEY
         )
 
         res.status(200).send({ status: true, token: token })
