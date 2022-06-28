@@ -14,7 +14,7 @@ const isValid = function (value) {
 }
 
 
-///////////////-----------------------------------------create Blog------------------------------------
+///////////////-----------------------------------------create Blog-------------------------------------------------------
 
 const createBlog = async function (req, res) {
   try {
@@ -25,7 +25,7 @@ const createBlog = async function (req, res) {
     if (Object.keys(data).length == 0) {
       return res.status(400).send({ status: false, msg: "blog data required" })
     }
-   
+
     if (!isValid(data.title)) { return res.status(400).send({ status: false, msg: "Title must be present." }) }
 
     if (!isValid(data.body)) { return res.status(400).send({ status: false, msg: "Body must be present." }) }
@@ -34,6 +34,8 @@ const createBlog = async function (req, res) {
 
     if (!mongoose.isValidObjectId(data.authorId))
       return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
+      //  console.log(mongoose, 37);
+
 
     let authId = await authorModel.findById(authorId)
 
@@ -43,7 +45,7 @@ const createBlog = async function (req, res) {
 
     let saveData = await blogModel.create(data)
 
-    res.status(201).send({ status: true, msg:"Blog Created Successfully",saveData })
+    res.status(201).send({ status: true, msg: "Blog Created Successfully", saveData })
 
 
 
@@ -56,13 +58,13 @@ const createBlog = async function (req, res) {
 
 
 
-/////----------------------------------------------------------------------getBlogs---------------------------------
+/////----------------------------------------------------------------------getBlogs---------------------------------------------
 const getBlogs = async function (req, res) {
   try {
 
     let data = req.query;
     let filter = {
-      isdeleted: false,
+      isDeleted: false,
       isPublished: true,
       ...data
     };
@@ -90,6 +92,7 @@ const getBlogs = async function (req, res) {
 
 
     if (authorId) {
+      
       if (!mongoose.isValidObjectId(authorId))
         return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
     }
@@ -109,7 +112,7 @@ const getBlogs = async function (req, res) {
   }
 };
 
-////////////----------------------------------------------------------updateBlog---------------------------------------
+////////////----------------------------------------------------------updateBlog------------------------------------------------
 
 
 
@@ -150,10 +153,10 @@ const updateBlogId = async function (req, res) {
       res.status(404).send({ status: false, msg: "No such Document" })
     }
 
-    ////////////////////------------------------------authorization-----------------------------------------------------
+    ////////////////////------------------------------authorization-----------------------------------------------------------
 
     const token = req.headers['x-api-key'] //we call headers with name x-api-key
-    if (!token) res.status(401).send({ status: false, msg: "missing a mandatory token😒" }) 
+    if (!token) res.status(401).send({ status: false, msg: "missing a mandatory token😒" })
     let decodedToken = jwt.verify(token, "FunctionUp-radon")
 
     let blog = req.params.blogId
@@ -166,7 +169,9 @@ const updateBlogId = async function (req, res) {
     }
 
 
-    //////////////////////-----------------------------------------------------------------------------
+    //////////////////////-----------------------------------------------------------------------------------------------------
+
+
 
     let pushData = { tags: data.tags, subcategory: data.subcategory }
 
@@ -182,7 +187,7 @@ const updateBlogId = async function (req, res) {
   }
 }
 
-///----------------------------------------------------------------deletedBlog-----------------------------------
+///----------------------------------------------------------------deletedBlog-------------------------------------------------
 
 
 const deleteByBlogId = async function (req, res) {
@@ -198,7 +203,7 @@ const deleteByBlogId = async function (req, res) {
       res.status(404).send({ msg: "Please enter valid blogId" })
     }
 
-    ////////////////////------------------------------authorization-----------------------------------
+    ////////////////////------------------------------authorization-------------------------------------------------------------
 
     const token = req.headers['x-api-key']
     if (!token) res.status(401).send({ status: false, msg: "missing a mandatory token😒" })
@@ -214,7 +219,7 @@ const deleteByBlogId = async function (req, res) {
     }
 
 
-    //////////////////////----------------------------------------------------------------------------
+    //////////////////////------------------------------------------------------------------------------------------------------
 
 
 
@@ -228,9 +233,6 @@ const deleteByBlogId = async function (req, res) {
     res.status(200).send({ status: true, msg: deletedBlog })
 
 
-
-
-
   } catch (err) {
     res.status(500).send({ status: false, msg: err.message })
   }
@@ -238,7 +240,7 @@ const deleteByBlogId = async function (req, res) {
 
 
 
-//////////////////----------------------------------------------deleteBlogbyquery-------------------------------------------------
+//////////////////----------------------------------------------deleteBlogbyquery---------------------------------------------------
 
 
 const deleteBlogbyquery = async function (req, res) {
@@ -248,33 +250,33 @@ const deleteBlogbyquery = async function (req, res) {
 
     if (!Object.keys(data).length)
       return res.status(400).send({ status: false, msg: "Please select some key for deletion." })
-    if(data.category){
-    if(!isValid(data.category)){
-      res.status(400).send({status:false,msg:"Invalid Category "})
+    if (data.category) {
+      if (!isValid(data.category)) {
+        res.status(400).send({ status: false, msg: "Invalid Category " })
+      }
     }
-  }
-  if(data.title){
-    if(!isValid(data.title)){
-      res.status(400).send({status:false,msg:"Invalid title "})
+    if (data.title) {
+      if (!isValid(data.title)) {
+        res.status(400).send({ status: false, msg: "Invalid title " })
+      }
     }
-  }
-  if(data.subcategory){
-    if(!isValid(data.subcategory)){
-      res.status(400).send({status:false,msg:"Invalid subcategory"})
+    if (data.subcategory) {
+      if (!isValid(data.subcategory)) {
+        res.status(400).send({ status: false, msg: "Invalid subcategory" })
+      }
     }
-  }
-    
-  if(data.authorId){
-    if (!data.authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
 
-    if (!mongoose.isValidObjectId(data.authorId))
-      return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
+    if (data.authorId) {
+      if (!data.authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
 
-    let authId = await authorModel.findById(data.authorId)
+      if (!mongoose.isValidObjectId(data.authorId))
+        return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
 
-    if (!authId) { return res.status(400).send({ status: false, msg: "AuthorId doesn't exist." }) }
-  }
-    
+      let authId = await authorModel.findById(data.authorId)
+
+      if (!authId) { return res.status(400).send({ status: false, msg: "AuthorId doesn't exist." }) }
+    }
+
 
 
     let blogs = await blogModel.updateMany({ data, isDeleted: false, isPublished: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })

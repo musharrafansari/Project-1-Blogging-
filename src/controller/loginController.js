@@ -10,7 +10,8 @@ const isValid = function (value) {
     return true
 }
 
-///////////////--------------------------------------------
+
+///////////////--------------------------------------------author Login-------------------------------------------------////////////////////
 
 
 
@@ -21,27 +22,30 @@ const authorLogin = async function (req, res) {
         let password = data.pasword;
 
         if (!data) {
-            res.satus(400).send({ status: false, msg: "There is no data In body to find Author" })
+            res.status(400).send({ status: false, msg: "There is no data In body to find Author" })
         }
 
         if (!isValid(emails)) {
             res.status(400).send({ status: false, msg: "Please enter your Email " })
         }
+
+        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email.trim()))) 
+        { return res.status(400).send({ status: false, msg: "Enter a valid email address." }) }
+
         if (!isValid(password)) {
             res.status(400).send({ status: false, msg: "Please enter your password " })
         }
 
-        let login = await authorModel.findOne({ email: emails, pasword: password }) //here we call authorModel db and save the data in login  VARIABLE
+        let login = await authorModel.findOne({ email: emails, pasword: password })//here we call authorModel db and save the data in login  VARIABLE
 
-        if (!login.email) { res.status(400).send({ status: false, msg: 'Invalid email' }) }
+        if (!login) { return res.status(404).send({ status: false, msg: "Invalid Login credentials" }) }
 
-        if (!login.pasword) { res.status(400).send({ msg: "Invalid password" }) }
 
         // creating JWt
         let token = jwt.sign(
             {
                 UserEmail: login.email,
-                UserId: login._id.toString(),//this is payload
+                UserId: login._id.toString(), //this is payload
                 batch: "radon-Project-1"
             },
             "FunctionUp-radon" //this is SECRET KEY

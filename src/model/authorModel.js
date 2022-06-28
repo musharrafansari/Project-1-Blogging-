@@ -1,15 +1,16 @@
 let mongoose = require("mongoose");
  
-const authorSchema = mongoose.Schema({
+const authorSchema = new mongoose.Schema({
     fname :{ 
         type:String,
-        required:true
+        required:true,
+        trim: true
        
     },
     lname:{
        type:String,
        required:true,
-       
+       trim: true
     },
     title:{
         type:String,
@@ -20,6 +21,8 @@ const authorSchema = mongoose.Schema({
         type:String,
         required:true,
         unique:true,
+        trim: true,
+        lowercase:true
     },
     pasword:{
         type:String,

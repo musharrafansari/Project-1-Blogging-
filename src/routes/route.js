@@ -11,7 +11,7 @@ const loginController = require("../controller/loginController")
 const auth1 = require("../middleware/authentication")
 
 
-
+/// Phase 1
 router.post('/authors', authController.createAuthor)
 
 router.post("/blogs", auth1.authenticate, blogController.createBlog)
@@ -24,6 +24,9 @@ router.delete('/blogs/:blogId', auth1.authenticate, blogController.deleteByBlogI
 
 router.delete('/blogs', auth1.authenticate, blogController.deleteBlogbyquery)
 
+
+
+/// Phase 2
 router.post('/login', loginController.authorLogin)
 
 
