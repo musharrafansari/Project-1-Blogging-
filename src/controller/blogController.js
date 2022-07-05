@@ -20,20 +20,22 @@ const createBlog = async function (req, res) {
   try {
     let data = req.body
 
-    const { authorId } = data //let authorId = data.authorId
+    const { authorId,title,body,category,subcategory,tags } = data // Object destructuring
 
     if (Object.keys(data).length == 0) {
       return res.status(400).send({ status: false, msg: "blog data required" })
     }
 
-    if (!isValid(data.title)) { return res.status(400).send({ status: false, msg: "Title must be present." }) }
+    if (!(title)) { return res.status(400).send({ status: false, msg: "Title must be present." }) }
+    if (!isValid(title)) { return res.status(400).send({ status: false, msg: "Enter valid title." }) }
 
-    if (!isValid(data.body)) { return res.status(400).send({ status: false, msg: "Body must be present." }) }
+    if (!(body)) { return res.status(400).send({ status: false, msg: "Body must be present." }) }
+    if (!isValid(body)) { return res.status(400).send({ status: false, msg: "Enter valid body." }) }
 
-    if (!data.authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
+    if (!authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
 
-    if (!mongoose.isValidObjectId(data.authorId))
-      return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
+    if (!mongoose.isValidObjectId(authorId))
+      return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId' })
       //  console.log(mongoose, 37);
 
 
@@ -41,15 +43,13 @@ const createBlog = async function (req, res) {
 
     if (!authId) { return res.status(400).send({ status: false, msg: "AuthorId doesn't exist." }) }
 
-    if (!isValid(data.category)) { return res.status(400).send({ status: false, msg: "Category must be present." }) }
+    if (!(data.category)) { return res.status(400).send({ status: false, msg: "Category must be present." }) }
+    if (!isValid(data.category)) { return res.status(400).send({ status: false, msg: "Enter valid category." }) }
 
     let saveData = await blogModel.create(data)
 
     res.status(201).send({ status: true, msg: "Blog Created Successfully", saveData })
-
-
-
-  }
+}
   catch (err) {
 
     res.status(500).send({ status: false, msg: err.message })
@@ -72,7 +72,7 @@ const getBlogs = async function (req, res) {
     const { authorId, category, tags, subcategory } = data
 
     if (category) {
-      let verifyCategory = await blogModel.findOne({ category: category })
+      let verifyCategory = await blogModel.find({ category: category,tags: tags ,subcategory: subcategory ,authorId:authorId })
       if (!verifyCategory) {
         return res.status(400).send({ status: false, msg: 'No blogs in this category exist' })
       }
@@ -89,21 +89,15 @@ const getBlogs = async function (req, res) {
         return res.status(400).send({ status: false, msg: 'No blogs in this subcategory exist' })
       }
     }
-
-
-    if (authorId) {
+  if (authorId) {
       
       if (!mongoose.isValidObjectId(authorId))
         return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
     }
 
     let GetRecord = await blogModel.find(filter)
-
-
     if (GetRecord.length == 0) {
-      return res.status(404).send({
-        data: "No such document exist with the given attributes.",
-      });
+      return res.status(404).send({ data: "No such document exist with the given attributes."});
     }
 
     res.status(200).send({ status: true, data: GetRecord });
@@ -138,19 +132,19 @@ const updateBlogId = async function (req, res) {
     }
 
     if (Object.keys(data).length == 0) {
-      res.status(400).send({ status: false, msg: "Data must be provided for update" })
+     return res.status(400).send({ status: false, msg: "Data must be provided for update" })
     }
     if (!ObjectId.isValid(blogId)) { return res.status(400).send({ status: false, msg: 'Please enter correct length of blog Id' }) }
 
     let blog_Id = await blogModel.findById(blogId)
 
     if (!blog_Id) {
-      res.status(400).send({ status: false, msg: " blog Id not found" })
+      return res.status(400).send({ status: false, msg: " blog Id not found" }) 
     }
     let findBlog = await blogModel.findOne({ _id: blogId, isDeleted: false })
 
     if (!findBlog) {
-      res.status(404).send({ status: false, msg: "No such Document" })
+      res.status(404).send({ status: false, msg: "No such Document found" })
     }
 
     ////////////////////------------------------------authorization-----------------------------------------------------------
@@ -194,7 +188,7 @@ const deleteByBlogId = async function (req, res) {
   try {
     let data = req.params.blogId
     // let Id = data.blogId
-    if (!data) { return res.status(400).send({ status: false, msg: "BlogId !~ must be provided " }) }
+    if (!data) { return res.status(400).send({ status: false, msg: "BlogId  must be provided " }) }
 
     if (!ObjectId.isValid(data)) { return res.status(400).send({ status: false, msg: 'Please enter correct length of blog Id' }) }
 
@@ -266,8 +260,8 @@ const deleteBlogbyquery = async function (req, res) {
       }
     }
 
-    if (data.authorId) {
-      if (!data.authorId) return res.status(400).send({ status: false, msg: 'Author Id must be present' })
+    
+      if (!data.authorId) {return res.status(400).send({ status: false, msg: 'Author Id must be present' })}
 
       if (!mongoose.isValidObjectId(data.authorId))
         return res.status(400).send({ status: false, msg: 'Please enter correct length of AuthorId Id' })
@@ -275,11 +269,25 @@ const deleteBlogbyquery = async function (req, res) {
       let authId = await authorModel.findById(data.authorId)
 
       if (!authId) { return res.status(400).send({ status: false, msg: "AuthorId doesn't exist." }) }
-    }
+    
+/////////////////////////////////////////////
 
+    // const token = req.headers['x-api-key'] //we call headers with name x-api-key
+    // if (!token) res.status(401).send({ status: false, msg: "missing a mandatory token😒" })
+    // let decodedToken = jwt.verify(token, "FunctionUp-radon")
 
+    // let author = req.query.authorId
+    // let userId = decodedToken.UserId
+ 
+    // let authorData = await blogModel.findOne({ _id: author })
 
-    let blogs = await blogModel.updateMany({ data, isDeleted: false, isPublished: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+    // if (authorData.authorId.toString() != userId) {
+    //   return res.status(403).send({ status: false, msg: 'You are not authrized' })
+    // }
+
+    /////////////////////////////////////////////////
+
+    let blogs = await blogModel.updateMany({ data, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
 
     if (!blogs.modifiedCount)
       return res.status(404).send({ status: false, msg: "No documents Found" })
@@ -295,6 +303,7 @@ const deleteBlogbyquery = async function (req, res) {
     res.status(500).send({ status: false, msg: err.message })
   }
 }
+
 
 module.exports.createBlog = createBlog
 
